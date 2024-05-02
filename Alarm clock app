@@ -26,7 +26,7 @@
 <button type="reset" onclick="clearAlarm()" class="clear-alarm">Stop Alarm</button>
 </div>
 </form>
-</section>
+</section>hu
 <hr style="margin-top: 20px">
 <section>
 <div>
@@ -41,3 +41,230 @@
 <script src="alarm.js"></script>
 </body>
 </html>
+const display = document.getElementById('clock');
+
+const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+audio.loop = true;
+
+let alarmTime = null;
+let alarmTimeout = null;
+
+const myList = document.querySelector('#myList');
+const addAlarm = document.querySelector('.setAlarm')
+
+const alarmList = []; 
+
+function ringing(now){
+    audio.play();
+    alert(`Hey! it is ${now}`)
+}
+
+function updateTime() {
+    var today = new Date();
+    const hour = formatTime(today.getHours());
+    const minutes = formatTime(today.getMinutes());
+    const seconds = formatTime(today.getSeconds());
+    const now = `${hour}:${minutes}:${seconds}`;
+
+    display.innerText=`${hour}:${minutes}:${seconds}`;
+
+    if(alarmList.includes(now) ){
+        ringing(now);
+    } 
+}
+
+function formatTime(time) {
+    if ( time < 10 && time.length != 2) {
+        return '0' + time;
+    }
+    return time;
+}
+
+function clearAlarm() {
+    audio.pause();
+    if (alarmTimeout) {
+        clearTimeout(alarmTimeout);
+        alert('Alarm cleared');
+    }
+}      
+
+myList.addEventListener('click', e=> {
+    console.log("removing element")
+    if(e.target.classList.contains("deleteAlarm")){
+        e.target.parentElement.remove();
+    }    
+})
+
+remove = (value) => {
+    let newList = alarmList.filter((time) => time != value);
+    alarmList.length = 0;                  
+    alarmList.push.apply(alarmList, newList);
+    console.log("newList", newList);
+    console.log("alarmList", alarmList);
+}
+
+function showNewAlarm(newAlarm){
+    const html =`
+    <li class = "time-list">        
+        <span class="time">${newAlarm}</span>
+        <button class="deleteAlarm time-control" id="delete-button" onclick = "remove(this.value)" value=${newAlarm}>Delete Alarm</button>       
+    </li>`
+    myList.innerHTML  += html 
+};
+
+addAlarm.addEventListener('submit', e=> {
+    e.preventDefault();
+    
+    let new_h=formatTime(addAlarm.a_hour.value);
+    if(new_h === '0'){
+        new_h = '00'
+    }
+    let new_m=formatTime(addAlarm.a_min.value);
+    if(new_m === '0'){
+        new_m = '00'
+    }
+    let new_s=formatTime(addAlarm.a_sec.value);
+    if(new_s === '0'){
+        new_s = '00'
+    }
+    
+    const newAlarm = `${new_h}:${new_m}:${new_s}`
+
+    if(isNaN(newAlarm)){
+        if(!alarmList.includes(newAlarm)){
+            alarmList.push(newAlarm);
+            console.log(alarmList);
+            console.log(alarmList.length);
+            showNewAlarm(newAlarm);
+            addAlarm.reset();
+
+        } else{
+            alert(`Alarm for ${newAlarm} already set.`);
+        }
+    } else{
+        alert("Invalid Time Entered")
+    }        
+})
+
+setInterval(updateTime, 1000);
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    background: url(cat\ 2.jpeg) no-repeat;
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    margin-top: 10%;
+    margin-left: 50%; 
+    font-family: 'Times New Roman', Times, serif;
+    margin-right: 40%;
+}
+
+.container{
+    align-content: center;
+    text-align: center;
+    width: 400px;
+    height: auto;
+    min-height: 400px;
+    padding: 20px;
+}
+
+.time-display{
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    background-color: white;
+    width: 230px;
+    height: 10%;
+    border-radius: 4px;
+    padding-left: 5px;
+    padding-right: 5px; 
+    margin-left: 35px;
+
+}
+
+.timer{
+    width: 40px;
+    height: 40px;
+    margin-top: 7x;
+    margin-right: 10px;
+}
+
+#clock{
+    font-size: 3rem;
+    font-weight: bold;
+    color: black;
+}
+
+.alarm-heading{
+    color: whitesmoke;
+    margin-bottom: 20px;
+    padding-top: 50px;
+}
+
+.set-alarm-field{
+    margin-top: -20px;
+    height: 40px;
+    padding-top: 0px;
+}
+
+.controls button{
+    background-color: tomato;
+    border-color: tomato;
+    color: whitesmoke;
+    width: 105px;
+    height: 35px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.controls button:hover{
+    background-color: orange;
+}
+
+#myList{
+    list-style-type: none;
+    
+}
+
+#myList li{
+    font-size: 1.2rem;
+    color: whitesmoke;
+    background-color: tomato;
+    height: 2rem;
+    margin-left: -30px;
+    border-radius: 4px;
+    padding-left: 16px;
+    padding-top: 10px;
+    width: 280px;
+    margin-bottom: 10px;
+}
+
+.time-list{
+    display: flex;
+    flex-direction: row;
+}
+
+.time-list span{
+    width: 160px;
+    margin-right: 10px;
+    
+}
+
+.time-list button{
+    background-color: orange;
+    border-color: orange;
+    border-radius: 3px;
+    border-width: 0px;
+    height: 22px;
+    color: whitesmoke;
+}
